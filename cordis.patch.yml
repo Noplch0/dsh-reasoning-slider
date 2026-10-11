@@ -1,0 +1,10 @@
+# The dsh-reasoning-slider bundle patch: one insert over the empty profile root.
+#
+# The name is the package's own name, so the row resolves through the profile's
+# node_modules once the profile manager has installed this package as a bundle.
+# The client half is found the same way — DSH reads `dsh.client` from this
+# package and serves `exports["./client"]` under /plugins.
+
+- insert:
+    - id: reasoning-slider
+      name: dsh-reasoning-slider

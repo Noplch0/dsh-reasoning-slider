@@ -1,0 +1,28 @@
+# Development directories
+.dev/
+.tools/
+.ref/
+
+# Node modules and cache
+node_modules/
+.pnpm-store/
+*.tgz
+
+# IDE and editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+Thumbs.db
+.env.local
+.env.*.local
