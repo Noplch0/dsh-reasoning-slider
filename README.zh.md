@@ -127,6 +127,24 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\install.ps1
 
 ---
 
+### 方法三：直接从 GitHub 安装
+
+无需本地检出，在 **设置 → 插件 → 添加插件** 中填入 GitHub 说明符而非文件夹路径：
+
+```text
+github:Noplch0/dsh-reasoning-slider
+```
+
+`pnpm` 只认 `github:所有者/仓库名` 这种写法。如果填的是 clone 地址（`git@github.com:Noplch0/dsh-reasoning-slider.git`，或去掉 `git@` 前缀的同一串），会直接报错：
+
+```text
+[ERR_PNPM_UNSUPPORTED_PROTOCOL] Unsupported protocol "github.com:" in the dependency specifier "github.com:Noplch0/dsh-reasoning-slider.git"
+```
+
+需要锁定分支或提交时在后面追加，例如 `github:Noplch0/dsh-reasoning-slider#master`。Git 方式在安装时会解析默认分支，之后可在**设置 → 插件**里检查更新以获取新提交。
+
+---
+
 ## 架构设计与目录结构
 
 ```

@@ -127,6 +127,24 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\install.ps1
 
 ---
 
+### Method 3: Install Straight from GitHub
+
+No local checkout needed — give DSH a GitHub specifier instead of a folder path in **Settings → Plugins → Add plugin**:
+
+```text
+github:Noplch0/dsh-reasoning-slider
+```
+
+`pnpm` only understands the `github:owner/repo` form. A clone URL — `git@github.com:Noplch0/dsh-reasoning-slider.git`, or the same string with the `git@` prefix stripped — fails with:
+
+```text
+[ERR_PNPM_UNSUPPORTED_PROTOCOL] Unsupported protocol "github.com:" in the dependency specifier "github.com:Noplch0/dsh-reasoning-slider.git"
+```
+
+To pin a branch or commit, append it: `github:Noplch0/dsh-reasoning-slider#master`. Git installs resolve the default branch at install time, so **Settings → Plugins** update checks pick up later commits.
+
+---
+
 ## Architecture & Codebase
 
 ```
