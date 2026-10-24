@@ -1,158 +1,218 @@
+<div align="center">
+
+<img src="cover.png" alt="dsh-reasoning-slider Cover" width="280" />
+
 # dsh-reasoning-slider
 
-A DeepSeek Harness **client plugin** that replaces the composer's model seat with a sleek reasoning-effort slider. Choose your model on top, drag the horizontal slider below to adjust reasoning effort across the model's supported levels.
+**Codex-style reasoning-effort slider for the DeepSeek Harness composer model seat.**
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![DeepSeek Harness](https://img.shields.io/badge/DeepSeek%20Harness-%3E%3D%200.2.0--rc.2-blueviolet)](https://deepseek.com)
+[![Platform](https://img.shields.io/badge/Platform-Desktop%20%7C%20Web-brightgreen)]()
+
+[English](README.md) • [简体中文](README.zh.md)
+
+</div>
+
+---
+
+## Overview
+
+**`dsh-reasoning-slider`** is a high-polish client plugin for [DeepSeek Harness (DSH)](https://deepseek.com). It reimagines the composer's model seat into a unified, Codex-inspired dual-tier control: switch your model from the top dropdown, and dynamically adjust reasoning effort using an ultra-fluid horizontal slider below.
+
+The plugin mounts non-destructively through Cordis slot injection, cleanly shadowing the default `ModelSelect` component while staying fully synchronized with DSH's internal model directory and the `/model` command.
 
 ```
-┌──────────────────────────────────────────┐
-│  DeepSeek V4.1 Flash                  ⌄   │   ← Click to change model
-│                                          │
-│                  极高                     │   ← Current effort level (colored)
-│           更快消耗使用额度                 │   ← Top tier caption
-│                                          │
-│    ●─────●─────◉─────○─────○─────○       │   ← Drag to adjust
-└──────────────────────────────────────────┘
+┌──────────────────────────────────────────────┐
+│  DeepSeek V4.1 Flash                     ⌄   │   ← Model selector (grouped by provider)
+│                                              │
+│                     最高                      │   ← Current effort tier (accent colored)
+│               更快消耗使用额度                 │   ← Top-tier quota warning caption
+│                                              │
+│   ●──────●──────◉──────○──────○──────○       │   ← Magnetic slider with drifting particles
+└──────────────────────────────────────────────┘
 ```
 
-## Features
+---
 
-- **Model selector** on top — click to browse available models grouped by provider
-- **Horizontal slider** for reasoning effort — drag left/right, click a rung, or use `←`/`→` keys
-- **Smart rungs** — slider ticks match exactly what each model supports, no filler
-- **Tier-aware colors** — from light blue through reference blue to the violet gradient on the top tier
-- **Keyboard-friendly** — arrow keys step through levels, `Home`/`End` jump to extremes
-- **Display settings** — configure particle animation on the Plugins page (on at all levels, off, or top level only)
-- **Localised** — Chinese and English dictionaries included
-- **Theme-aware** — respects DSH light and dark palettes
+## Key Features
+
+- 🎚️ **Codex-Style Integrated Control**  
+  Combines model selection and reasoning effort into a single, compact composer seat. Click the model row to expand the provider list, or drag the horizontal slider to modulate thinking intensity.
+
+- 🎯 **Dynamic, Model-Adaptive Rungs**  
+  Slider tick marks automatically adapt to the exact reasoning levels advertised by the active model (e.g., `off`, `minimal`, `low`, `medium`, `high`, `xhigh`, `max`, `ultra`). Models lacking reasoning metadata gracefully hide the slider without visual clutter.
+
+- 🎨 **Tier-Aware Aesthetics & Violet River**  
+  - **Progressive Blue Tones:** Smooth procedural gradient transition from ice blue (`#A9C9FA`) to reference blue (`#0169CC`) as reasoning steps up.
+  - **Animated Top Tier:** The highest tier triggers the signature violet gradient (`#3B45D2` → `#9C72FF`) featuring continuous dual-layer river flow animation, dynamic light sweep, and the quota advisory *"Uses your quota faster"*.
+
+- 🧲 **Magnetic Snapping & Tactile Drag**  
+  - A tuned **17.5% magnetic snap zone** glides the knob onto ticks cleanly when released nearby, while leaving the majority of travel smooth and loose for natural dragging.
+  - Subtle knob scaling (`1.08x`) and lifted shadow on active pointer drag.
+
+- 🌌 **Procedural Particle Comet Field**  
+  - Deterministic particle simulation drifting across the track fill without layout recalculations.
+  - Scaled density and velocity: from 5 particles at low rungs up to 25 particles on the top tier with tapered comet tails.
+
+- ⌨️ **Keyboard Accessible & Inclusive**  
+  - Full keyboard control: `←` / `→` arrow keys step across rungs; `Home` / `End` jump straight to extremes.
+  - Native ARIA roles (`role="slider"`, `role="switch"`), focus-visible rings, and high-contrast labels.
+
+- ⚙️ **Integrated Plugin Settings**  
+  Adds a configuration card directly to **Settings → Plugins (`plugins.bundle.config`)** to control particle animations (*All Levels*, *Top Level Only*, or *Disabled*), persisted in `localStorage`.
+
+- 🌐 **Native Bilingual Localization (i18n)**  
+  Built-in Chinese (`zh-CN`) and English (`en-US`) dictionaries seamlessly plugged into DSH's `locale` service.
+
+- 🛡️ **Non-Destructive Slot Shadowing & Fault Tolerance**  
+  - Registers into `conversation.input.model` at priority `-1`. The stock model seat remains installed beneath; disabling the plugin instantly restores the default UI.
+  - Multi-tier exponential backoff retries with graceful fallback if session bindings or remote resolvers are momentarily unavailable.
+
+---
 
 ## Requirements
 
-- **DeepSeek Harness** `0.2.0-rc.2` or later
-- Built-in profile plugins: `dsh-client-ui-model-selection`, `dsh-client-locale`
+- **DeepSeek Harness** `0.2.0-rc.2` or higher
+- Built-in host profile plugins:
+  - `dsh-client-ui-model-selection`
+  - `dsh-client-locale`
+
+---
 
 ## Installation
 
-### Via DeepSeek Harness (Recommended)
+### Method 1: Via DeepSeek Harness UI (Recommended)
 
-1. **Settings → Plugins → Add plugin**
-2. Enter the folder path: `D:\Projects\dsh-thing-effort`
-3. Restart DeepSeek Harness once (profile resolution happens at boot)
+1. Open **DeepSeek Harness**.
+2. Navigate to **Settings → Plugins → Add plugin**.
+3. Enter the absolute path to this project folder:
+   ```text
+   path\to\dsh-thing-effort
+   ```
+4. Restart DeepSeek Harness once (profile dependencies resolve at startup).
 
-DSH will:
-- Run `pnpm add` to add the package
-- Record it in `dsh.profile.bundles`
-- Apply the bundle patch ([`cordis.patch.yml`](cordis.patch.yml))
+> **What happens under the hood:**  
+> DSH will run `pnpm add`, register the package in `dsh.profile.bundles`, and apply [`cordis.patch.yml`](cordis.patch.yml).  
+> To uninstall, go to **Settings → Plugins**, locate `dsh-reasoning-slider`, and click **Uninstall**.
 
-To remove: **Settings → Plugins**, find the plugin and uninstall.
+---
 
-### Manual Installation (PowerShell)
+### Method 2: Manual Installation (PowerShell)
 
-If you prefer not to use pnpm:
+If you prefer not to touch profile package manifests with `pnpm`, run the bundled PowerShell installer:
 
 ```powershell
 # PowerShell 7
 pwsh -File scripts\install.ps1
 
-# Windows PowerShell 5.1 (unsigned script; bypass for this run)
+# Windows PowerShell 5.1 (Bypass execution policy for current run)
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts\install.ps1
 ```
 
-This adds the plugin as an absolute path in `cordis.patch.yml` (backed up as `cordis.patch.yml.bak-<timestamp>` first).
+#### Installer Features & Options
+- **Profile Target:** Defaults to `$env:DSH_HOME\profiles\desktop` (or `~/.dsh/profiles/desktop`). Specify a custom profile via `-ProfileDir`:
+  ```powershell
+  pwsh -File scripts\install.ps1 -ProfileDir "C:\path\to\dsh\profile"
+  ```
+- **Safe Patching:** Backs up existing `cordis.patch.yml` as `cordis.patch.yml.bak-<timestamp>` before writing.
+- **Mutual Exclusion Check:** Prevents duplicate registration if the plugin is already installed via the UI.
+- **Uninstall / Removal:**
+  ```powershell
+  pwsh -File scripts\install.ps1 -Remove
+  ```
 
-To remove: `pwsh -File scripts\install.ps1 -Remove`
-
-**Note:** Use only one installation route. Installing via both methods will cause the plugin to mount twice, and the second registration will fail.
-
-## Architecture
-
-The plugin has two halves working together:
-
-| File | Purpose |
-|---|---|
-| [`lib/index.js`](lib/index.js) | Node half — minimal entry point so the plugin appears in the Loader tree |
-| [`lib/client.js`](lib/client.js) | Browser half — the actual UI seat served at `/plugins/dsh-reasoning-slider/client.js` |
-| [`cordis.patch.yml`](cordis.patch.yml) | Bundle patch — registers the plugin in the Cordis loader |
-| [`package.json`](package.json) | Declares `dsh.bundle` and `dsh.client`, exports the client module |
-
-### How it Works
-
-- **Slot Registration** — claims the `conversation.input.model` seat at priority `-1`, shadowing the default `ModelSelect` without unloading it
-- **Model Store** — reads from and writes to the same model directory that `/model` uses, so changes in either surface appear everywhere
-- **Per-Session Resolution** — resolves the model directory per render to handle session bindings and late subagent address discovery gracefully
-- **Recovery** — automatic retries with exponential backoff for missing bindings, with a visible "click to retry" button
-- **Scope-Owned Registration** — when the model service is replaced, the old seat automatically retires and a new one takes its place
-
-### Dependency Injection
-
-The plugin exports an `inject` list that Cordis uses to sequence service availability:
-
-```js
-inject: ['locale', 'slots', 'sessions', 'modelDirectories']
-```
-
-This ensures all required services are available before `apply()` runs. Without proper ordering, the plugin would fail to activate.
-
-## Configuration
-
-Display settings are stored in browser `localStorage`:
-
-- **Particle animation** — on at every level (default), off everywhere, or only at the top level
-- **Per-browser** — each browser remembers its own preference
-
-Settings appear on the plugin's page in **Settings → Plugins**.
-
-## Development & Testing
-
-Local test harnesses are in [`.dev/`](.dev/):
-
-```powershell
-cd .dev
-pnpm install        # Once: installs React, test renderer, and YAML parser
-node render-seat.test.mjs   # Test UI rendering, drag, keyboard, and colors
-node bundle.test.mjs        # Verify packaging against DSH expectations
-```
-
-Tests cover:
-- Trigger and panel rendering with real React
-- Drag-to-select and keyboard navigation
-- Tier colors and particle scaling
-- Model list and provider-default rungs
-- Session binding recovery and retries
-- Plugin packaging conformance
-
-## Design Notes
-
-### Slider Geometry
-
-Measured from reference design:
-- Track: 24px tall, fully rounded
-- Knob: 26px, centered on track
-- Rung spacing: `13px + (i / (n-1)) × (100% - 26px)` — knob travel inset by its radius
-- Fill: runs from track left edge to knob center
-- Ticks: 4px white/dark dots at each rung position
-
-### Particle Scaling
-
-The top rung has fixed parameters: **25 particles, 1-second drift period**. Other rungs scale linearly:
-
-```js
-share = i / (n - 2)
-particles = Math.round(5 + 15 * share)
-baseDriftSeconds = 10 - 8 * share
-```
-
-For a 6-rung ladder: particles are [5, 9, 13, 16, 20, 25] and drift periods are [10, 8, 6, 4, 2, 1] seconds.
-
-## Limitations
-
-- **Version coupling** — requires DSH `0.2.0-rc.2` or later; future releases that rename `conversation.input.model` or change `modelDirectories` will need updates
-- **One ladder per model** — effort levels come from the model's `reasoning` metadata; models without it show no slider
-- **Manual path updates** — the PowerShell install uses absolute paths; moving this folder breaks the link until reinstalled
-- **No per-session history** — the slider shows the current session's effort and writes changes back; it keeps no history of its own
-
-## License
-
-MIT
+> [!WARNING]  
+> Choose **either** Method 1 or Method 2. Applying both simultaneously will cause the plugin to mount twice, resulting in a duplicate seat collision.
 
 ---
 
-**Questions?** Check the [DeepSeek Harness documentation](https://deepseek.com) or open an issue in this repository.
+## Architecture & Codebase
+
+```
+dsh-thing-effort/
+├── cover.png              # Plugin cover image
+├── icon.svg               # Vector SVG icon for package listings
+├── cordis.patch.yml       # Cordis bundle patch entry
+├── package.json           # Plugin manifest & bundle declarations
+├── lib/
+│   ├── index.js           # Host-side entry (Cordis loader bridge)
+│   └── client.js          # Browser client runtime (UI seat & renderer)
+└── scripts/
+    └── install.ps1        # Zero-pnpm PowerShell profile patcher
+```
+
+### Component Breakdown
+
+| File | Role | Description |
+|---|---|---|
+| [`lib/index.js`](lib/index.js) | Node / Host | Minimal loader entry point that exposes the plugin to the Cordis lifecycle tree. |
+| [`lib/client.js`](lib/client.js) | Web / Client | Complete UI runtime containing the slider math, SVG icons, React components, CSS, and Cordis slot injectors. |
+| [`cordis.patch.yml`](cordis.patch.yml) | Bundle Patch | Profile patch that inserts `reasoning-slider` into the Cordis loader pipeline. |
+| [`package.json`](package.json) | Manifest | Declares `dsh.bundle` and `dsh.client` targets, exporting `./client` for browser delivery. |
+| [`scripts/install.ps1`](scripts/install.ps1) | Script | Automated PowerShell patcher with backup and rollback support. |
+
+### Cordis Dependency Injection & Lifecycles
+
+The browser plugin strictly sequences its activation through Cordis DI:
+
+```js
+// Core root dependencies
+inject: ['locale', 'slots', 'sessions']
+```
+
+1. **Locale Registration:** Dictionaries (`zh` and `en`) are registered under namespace `reasoning-slider`.
+2. **Context Scope Inheritance:** Optional services (`modelDirectories`, `remote`, `remote.session`) are bound via `ctx.inject(...)` to match the exact lifetime of the active session resolver.
+3. **Slot Registration (`priority: -1`):** Claims `conversation.input.model` with priority `-1`. Because Cordis renders the lowest active numerical priority in single seats, this seat renders in place of stock `ModelSelect` (priority `0`). If this plugin is uninstalled or deactivated, `ModelSelect` resumes immediately.
+4. **Settings Slot:** Registers `SettingsPanel` into `plugins.bundle.config` under key `dsh-reasoning-slider`.
+
+---
+
+## Design Specifications
+
+### Slider Geometry
+
+All visual dimensions adhere to rigorous design specs:
+
+| Parameter | Value | Details |
+|---|---|---|
+| **Track Height** | `24px` | Fully rounded pill (`border-radius: 999px`) |
+| **Knob Diameter** | `26px` | Circular knob centered vertically over track |
+| **Travel Inset** | `13px` (`KNOB_R`) | Travel distance is inset by knob radius on each end |
+| **Rung Spacing** | `13px + (i / (n-1)) * (100% - 26px)` | Mathematical position of tick index `i` across `n` rungs |
+| **Fill Tuck** | `KNOB_R - sqrt(KNOB_R² - TRACK_R²)` | Computes fill underlap so no antialiased gaps or seams appear |
+| **Snap Fraction** | `17.5%` (`0.175`) | Magnetic snap radius around each rung |
+
+### Particle Drift Mechanics
+
+The procedural drifting particle field simulates a cosmic stream within the track fill:
+- **Maximum Tier (Top):** Locked at **25 particles**, **1-second drift period**, animated violet gradient ribbon with highlight sweep.
+- **Intermediate Rungs:** Scaled linearly based on rung index:
+  $$\text{particles} = \operatorname{round}\left(5 + 15 \times \frac{i}{n - 2}\right)$$
+  $$\text{driftSeconds} = 10 - 8 \times \frac{i}{n - 2}$$
+- **Comet Tail:** Continuous gradient fade (`TRAIL_RAMP`) enclosed in a tapered polygon clip-path (`TRAIL_OUTLINE`) eliminating stepped banding artifacts.
+
+---
+
+## Configuration
+
+Display settings are managed per-browser via `localStorage` (`dsh-reasoning-slider/prefs`):
+
+- **Show Particles:** Toggle the entire background particle animation on or off.
+- **Only at the Top Level:** Limit particle animations exclusively to the highest reasoning tier.
+
+Access these toggles under **Settings → Plugins → dsh-reasoning-slider**.
+
+---
+
+## Limitations & Notes
+
+- **Version Lock:** Requires DeepSeek Harness `0.2.0-rc.2` or later.
+- **Model Metadata:** Reasoning levels depend on upstream model definitions in `modelDirectories`. Models without reasoning capabilities will display standard model switching without the slider.
+- **Path Persistence:** The manual PowerShell installer references the absolute path of this repository. If the folder is moved, re-run `scripts\install.ps1`.
+
+---
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
